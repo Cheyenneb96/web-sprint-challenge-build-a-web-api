@@ -2,7 +2,7 @@
 const express = require('express');
 const Actions = require('./actions-model')
 const router = express.Router();
-const {validateActionId, validateAction} = require('../actions/actions-middlware') 
+const {validateActionId, validateAction,validatePutA} = require('../actions/actions-middlware') 
 
 router.get('/',async (req,res,)=>{
     res.json(await Actions.get())
@@ -27,6 +27,15 @@ router.post('/',validateAction, async (req, res) => {
   });
 
   
+  router.put('/:id',validateActionId, validatePutA, (req, res, next) => {
+    Actions.update(req.params.id, req.body)
+    .then(action => {
+      res.json(action);
+    })
+    .catch(error => {
+      next(error);
+    });
+  });
 
 router.use((err, req, res, next) => {
     res.status(err.status || 500).json({

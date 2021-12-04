@@ -35,7 +35,24 @@ async function validateActionId(req, res, next) {
      
   }
 
+  async function validatePutA(req, res, next) {
+    const action = await Actions.get(req.params.id)
+    if (!action){
+      res.status(400).json({
+        message: "action doesn't exist"
+      })
+    } else if (!req.body) {
+      res.status(400).json({
+        message: "missing required field"
+      })
+    } else {
+      req.action = action
+      next()
+    }
+  }
+
   module.exports = {
     validateActionId,
-   validateAction
+   validateAction,
+   validatePutA
 }
