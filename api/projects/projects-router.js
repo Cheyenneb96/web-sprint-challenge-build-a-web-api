@@ -1,7 +1,7 @@
 // Write your "projects" router here!
 const { query } = require('express');
 const express = require('express');
-const {validateProjectId, validateProject} = require('../projects/projects-middleware')
+const {validateProjectId, validateProject, validatePut} = require('../projects/projects-middleware')
 const Project = require('./projects-model')
 const router = express.Router();
 
@@ -25,6 +25,18 @@ router.get('/:id', validateProjectId, (req, res, next) => {
       });
     });
   });
+
+
+  router.put('/:id',validateProjectId, validatePut, (req, res, next) => {
+    Project.update(req.params.id, req.body)
+    .then(project => {
+      res.json(project);
+    })
+    .catch(error => {
+      next(error);
+    });
+  });
+  
 
 router.use((err, req, res, next) => {
     res.status(err.status || 500).json({

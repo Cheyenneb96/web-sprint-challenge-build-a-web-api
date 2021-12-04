@@ -1,6 +1,10 @@
 // add middlewares here related to projects
 const Projects = require('../projects/projects-model')
 
+function isNotEmptyString(str) {
+  return typeof str === 'string' && str.trim().length > 0
+}
+
 async function validateProjectId(req, res, next) {
     try{
       const project = await Projects.get(req.params.id)
@@ -32,11 +36,27 @@ async function validateProject(req, res, next) {
     req.project = project
     next()
   }
-   
+}
+
+async function validatePut(req, res, next) {
+  const project = await Projects.get(req.params.id)
+  if (!project){
+    res.status(400).json({
+      message: "Project doesn't exist"
+    })
+  } else if (!req.body) {
+    res.status(400).json({
+      message: "missing required field"
+    })
+  } else {
+    req.project = project
+    next()
+  }
 }
 
 
   module.exports = {
       validateProjectId,
-      validateProject
+      validateProject,
+      validatePut
   }
